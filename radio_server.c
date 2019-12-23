@@ -16,14 +16,14 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#define NUM_OF_BYTES				1024
-#define STDIN_FD				0
+#define NUM_OF_BYTES			1024
+#define STDIN_FD			0
 #define UDP_RATE_DELAY			62500
-#define MAX_CLIENTS				100
-#define WELCOME_BUFFER_SIZE			3
+#define MAX_CLIENTS			100
+#define WELCOME_BUFFER_SIZE		3
 
-#define REPLY_TYPE_WELCOME			0
-#define REPLY_TYPE_ANNOUNCE			1
+#define REPLY_TYPE_WELCOME		0
+#define REPLY_TYPE_ANNOUNCE		1
 #define REPLY_TYPE_PERMIT_SONG		2
 #define REPLY_TYPE_INVALID_CMD		3
 #define REPLY_TYPE_NEW_STATIONS		4
