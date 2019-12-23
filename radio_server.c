@@ -1,7 +1,7 @@
-/**********************************************************************/
-/* --------------------[ Radio's server control ]-------------------- */
-/* 			Developed by: Itay Parag & Nir Rafman 				*/
-/**********************************************************************/
+/************************************************************************/
+/* -------------------[ Radio's server control ]----------------------- */
+/* 		Developed by: Itay Parag & Nir Rafman 			*/
+/************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,16 +29,16 @@
 #define REPLY_TYPE_NEW_STATIONS		4
 
 typedef struct Station {
-	int			multi_address;
+	int		multi_address;
 	char *		song_name;
-	uint32_t		song_size;
+	uint32_t	song_size;
 	uint8_t		song_name_size;
 	FILE *		song;
 } Station;
 
 typedef struct StationsArray {
-	Station *		station_num;
-	uint16_t		used;			
+	Station *	station_num;
+	uint16_t	used;			
 	size_t		size;
 } Array;
 
@@ -47,8 +47,8 @@ typedef struct Clients {
 	uint8_t		hasThread;
 	uint8_t		hasSocket;
 	uint8_t		helloReceived;
-	int			socket;			/* client's socket */
-	pthread_t		thread;
+	int		socket;			/* client's socket */
+	pthread_t	thread;
 	struct		sockaddr_in addr;
 	fd_set		client_fd;
 } Clients;
@@ -69,16 +69,16 @@ void printMenu();
 
 fd_set		fds;
 Clients		clients[MAX_CLIENTS] = {0};		// set place for the maximum clients possible
-pthread_t		cThread[MAX_CLIENTS];				// thread for each client
+pthread_t	cThread[MAX_CLIENTS];				// thread for each client
 Array		stations;
-int			connectedClients = 0, base_multicast_addr, curClient=0, lastStation=0, welcomeFlag=1, mainFlag=1, clientFlag=1;
-uint16_t		udp_port_num, tcp_port_num;
+int		connectedClients = 0, base_multicast_addr, curClient=0, lastStation=0, welcomeFlag=1, mainFlag=1, clientFlag=1;
+uint16_t	udp_port_num, tcp_port_num;
 struct 		timeval timeout;
 volatile int	permitSong = 1;					// define mutex for the song upload procedure (1 = can upload, 0 = block)
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char *argv[]) {
-	int			i, sender_socket_fd, ttl = 15;
+	int		i, sender_socket_fd, ttl = 15;
 	char  		buffer[NUM_OF_BYTES], mCastAddr[15] = {'\0'};
 	pthread_t	t_welcome;
 	struct		sockaddr_in udp_sender_addr;
@@ -166,7 +166,7 @@ void welcomeThread() {
 	char	welcome_buffer[10]={'\0'}, action, mCastAddr[15]={'\0'};
 	struct	sockaddr_in welcome_addr;
 	struct	in_addr multi_num;
-	int		i, recLen, countedClients, welcome_socket, selectValue, getUserInput, count=0, ByteCount;
+	int	i, recLen, countedClients, welcome_socket, selectValue, getUserInput, count=0, ByteCount;
 	
 	welcome_socket = socket(AF_INET, SOCK_STREAM, 0);		// open the welcome socket
 	if(welcome_socket < 0) {
