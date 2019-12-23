@@ -623,11 +623,13 @@ void invalidCommand(int who, char * errorMsg) {
 	int	msgSize = strlen(errorMsg);
 	char invalid_buffer[msgSize+3];
 	
-	invalid_buffer[0] = REPLY_TYPE_INVALID_CMD;
-	invalid_buffer[1] = msgSize;
-	strncpy(invalid_buffer+2, errorMsg, msgSize);
-
-	if(clients[who].hasSocket) {	// check that there is an opened socket before using it, because invalid commands might be sent before socket has opened
+	/* check that there is an opened socket before using it,
+	because invalid commands might be sent before socket has opened */
+	if(clients[who].hasSocket) {
+		invalid_buffer[0] = REPLY_TYPE_INVALID_CMD;
+		invalid_buffer[1] = msgSize;
+		strncpy(invalid_buffer+2, errorMsg, msgSize);
+		
 		write(clients[who].socket, &invalid_buffer, sizeof(invalid_buffer));
 	}
 }
