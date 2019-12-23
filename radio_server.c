@@ -17,9 +17,9 @@
 #include <pthread.h>
 
 #define NUM_OF_BYTES				1024
-#define STDIN_FD					0
-#define UDP_RATE_DELAY				62500
-#define MAX_CLIENTS					100
+#define STDIN_FD				0
+#define UDP_RATE_DELAY			62500
+#define MAX_CLIENTS				100
 #define WELCOME_BUFFER_SIZE			3
 
 #define REPLY_TYPE_WELCOME			0
@@ -69,17 +69,17 @@ void printMenu();
 
 fd_set		fds;
 Clients		clients[MAX_CLIENTS] = {0};		// set place for the maximum clients possible
-pthread_t	cThread[MAX_CLIENTS];				// thread for each client
+pthread_t	cThread[MAX_CLIENTS];			// thread for each client
 Array		stations;
-int		connectedClients = 0, base_multicast_addr, curClient=0, lastStation=0, welcomeFlag=1, mainFlag=1, clientFlag=1;
+int		connectedClients=0, base_multicast_addr, curClient=0, lastStation=0, welcomeFlag=1, mainFlag=1, clientFlag=1;
 uint16_t	udp_port_num, tcp_port_num;
 struct 		timeval timeout;
-volatile int	permitSong = 1;					// define mutex for the song upload procedure (1 = can upload, 0 = block)
+volatile int	permitSong = 1;				// define mutex for the song upload procedure (1 = can upload, 0 = block)
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char *argv[]) {
-	int		i, sender_socket_fd, ttl = 15;
-	char  		buffer[NUM_OF_BYTES], mCastAddr[15] = {'\0'};
+	int		i, sender_socket_fd, ttl=15;
+	char  		buffer[NUM_OF_BYTES], mCastAddr[15]={'\0'};
 	pthread_t	t_welcome;
 	struct		sockaddr_in udp_sender_addr;
 	struct		in_addr multi_num;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 			error("can't play the song");
 		}
 		
-		strcpy(stations.station_num[stations.used-1].song_name, argv[i]);				// Insert the song name to the struct
+		strcpy(stations.station_num[stations.used-1].song_name, argv[i]);			// Insert the song name to the struct
 		stations.station_num[stations.used-1].song_name_size = strlen(stations.station_num[stations.used-1].song_name);
 		stations.station_num[stations.used-1].song_size = file_stat.st_size;
 		
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 	/* -----------------[ Listen to the Welcome socket ]----------------- */
 	/**********************************************************************/
 	
-	pthread_create(&t_welcome, NULL, (void *) welcomeThread, NULL);	// start listening for hello messages
+	pthread_create(&t_welcome, NULL, (void *) welcomeThread, NULL);		// start listening for hello messages
 	pthread_join((pthread_t)welcomeThread, NULL);
 	
 	/**********************************************************************/
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 			
 			if(fread(buffer, NUM_OF_BYTES, 1, stations.station_num[i].song) <= 0) {		// we've reached the end of the song
 				fclose(stations.station_num[i].song);
-				open_song(i); // re-open the song after he finished playing, so we can loop it
+				open_song(i);		// re-open the song after he finished playing, so we can loop it
 				fread(buffer, NUM_OF_BYTES, 1, stations.station_num[i].song);	
 			}
 			
@@ -200,12 +200,12 @@ void welcomeThread() {
 		FD_SET(welcome_socket, &fds);
 		FD_SET(STDIN_FD, &fds);
 		
-		selectValue = select(FD_SETSIZE, &fds, NULL, NULL, NULL);		// wait for new connection
+		selectValue = select(FD_SETSIZE, &fds, NULL, NULL, NULL);	// wait for new connection
 		if((selectValue < 0) && (errno != EINTR)) {				
 			error("WelcomeThread's select error");
 		}
 		
-		if(FD_ISSET(STDIN_FD, &fds)) {	// input from user
+		if(FD_ISSET(STDIN_FD, &fds)) {		// input from user
 			getUserInput = 1;
 			while(getUserInput) {
 				getUserInput = 0;
@@ -252,9 +252,9 @@ void welcomeThread() {
 							if(countedClients == connectedClients) break;	// stop searching for clients on the list in case we've found them all
 						}
 						
-						printf("We're terminating the server!\n"
-								"• Closing all threads & sockets\n"
-								"• Freeing all allocated memory\n");
+						printf("We're terminating the server!\n" \
+							"• Closing all threads & sockets\n" \
+							"• Freeing all allocated memory\n");
 						
 						freeArray(&stations);
 						
@@ -267,7 +267,7 @@ void welcomeThread() {
 					default:
 						printf("Wrong input!\n");
 						printMenu();
-						getUserInput = 1;			// get user input again
+						getUserInput = 1;	// get user input again
 					break;
 				}
 			}
@@ -337,10 +337,10 @@ void welcomeThread() {
 }
 
 void clientThread(int who) {
-	uint8_t		userAction = -1, songNameSize=0, songValid=1;
-	uint16_t	i, stationNum = -1, countedClients=0;
+	uint8_t		userAction=-1, songNameSize=0, songValid=1;
+	uint16_t	i, stationNum=-1, countedClients=0;
 	uint32_t	songSize, receivedBytes=0, recBytes=0, percent;
-	char		client_buffer[NUM_OF_BYTES] = {'\0'}, cmdString[30], *songName;
+	char		client_buffer[NUM_OF_BYTES]={'\0'}, cmdString[30], * songName;
 	FILE *		recSong;
 	
 	clients[who].hasThread = 1;		// mark that thread has been opened
@@ -518,7 +518,7 @@ void clientThread(int who) {
 								printf("Song download has finished! all clients have been updated\n");
 							}
 							
-							printMenu();	// show the menu after the upload procedure
+							printMenu();		// show the menu after the upload procedure
 						}
 					}
 					
@@ -620,8 +620,8 @@ void removeClient(int who) {
 }
 
 void invalidCommand(int who, char * errorMsg) {
-	int	msgSize = strlen(errorMsg);
-	char invalid_buffer[msgSize+3];
+	int	msgSize=strlen(errorMsg);
+	char	invalid_buffer[msgSize+3];
 	
 	/* check that there is an opened socket before using it,
 	because invalid commands might be sent before socket has opened */
@@ -635,7 +635,7 @@ void invalidCommand(int who, char * errorMsg) {
 }
 
 void permitUpload(int who, uint8_t type) {
-	char buffer[2] = {'\0'};
+	char buffer[2]={'\0'};
 	
 	buffer[0] = REPLY_TYPE_PERMIT_SONG;
 	buffer[1] = type;
@@ -643,8 +643,8 @@ void permitUpload(int who, uint8_t type) {
 }
 
 void printMenu() {
-	printf("==================== [ Menu ] ====================\n"
-			"- p:  Display the stations and connected clients\n"
-			"- q:  Quit the server\n"
-			"==================================================\n\n");
+	printf("==================== [ Menu ] ====================\n" \
+		"- p:  Display the stations and connected clients\n" \
+		"- q:  Quit the server\n" \
+		"==================================================\n\n");
 }
