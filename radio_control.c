@@ -1,7 +1,7 @@
-/**********************************************************************/
-/* --------------------[ Radio's client control ]-------------------- */
-/* 			Developed by: Itay Parag & Nir Rafman 				*/
-/**********************************************************************/
+/************************************************************************/
+/* -------------------[ Radio's client control ]----------------------- */
+/* 		Developed by: Itay Parag & Nir Rafman 			*/
+/************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,29 +17,29 @@
 #include <pthread.h>
 
 #define Num_of_bytes		1024
-#define stdin_fd			0
+#define stdin_fd		0
 
 
 typedef struct Hello {
 	uint8_t		commandType;	/*HELLO*/
-	uint16_t		reserved;
+	uint16_t	reserved;
 } Hello;
 
 typedef struct AskSong {
 	uint8_t		commandType;	/*ASK SONG*/
-	uint16_t		stationNumber;
+	uint16_t	stationNumber;
 } AskSong;
 
 typedef struct UpSong {
 	uint8_t		commandType;	/*UP SONG*/
-	uint32_t		songSize;
+	uint32_t	songSize;
 	uint8_t		songNameSize;
 	char *		songName;
 } UpSong;
 
 typedef struct UDP_Args {
-	uint32_t		multicastGroup;
-	uint16_t		portNumber;
+	uint32_t	multicastGroup;
+	uint16_t	portNumber;
 } UDP_Args;
 
 
@@ -50,7 +50,7 @@ void error(const char * str);
 void clearBuffer();
 
 fd_set fds;
-int tcp_socket_fd, udp_socket_fd, total_bytes_rec = 0, userAction=-1, change_station=0; 
+int tcp_socket_fd, udp_socket_fd, total_bytes_rec=0, userAction=-1, change_station=0; 
 uint16_t numStations, tcpFlag=1, udpFlag=1;
 uint32_t newMulticastAddr=0;
 char tcp_buffer[Num_of_bytes]/* Receiver buffer */, buffer[Num_of_bytes]/* Transmitter buffer */; 
@@ -119,9 +119,9 @@ int main(int argc, char *argv[]) {
 		error("Error, welcome message length is wrong, terminating client");
 	}
 	else if(tcp_buffer[0] == 3) {
-			invalidStr = (char *) malloc(tcp_buffer[1]);
-			strncpy(invalidStr, (tcp_buffer+2), tcp_buffer[1]);
-			error(invalidStr);
+		invalidStr = (char *) malloc(tcp_buffer[1]);
+		strncpy(invalidStr, (tcp_buffer+2), tcp_buffer[1]);
+		error(invalidStr);
 	}
 	else if(tcp_buffer[0] != hello.commandType) {			// check the reply type
 		error("Error receiving welcome reply, terminating client");
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 	/* ---------[ Welcome received - start UDP & TCP listeners ]--------- */
 	/**********************************************************************/
 	
-	numStations			= htons(*(uint16_t *) (&(tcp_buffer)[1]));			// save the input
+	numStations		= htons(*(uint16_t *) (&(tcp_buffer)[1]));			// save the input
 	UDPs.multicastGroup	= htonl(*(uint32_t *) (&(tcp_buffer)[3]));
 	UDPs.portNumber		= htons(*(uint16_t *) (&(tcp_buffer)[7]));
 	
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
 void Main_listener() {
 	AskSong askSong = {1};
 	UpSong upSong = {2};
-	int j, newStationTimeOut=0, bytes_rec = 0, selectValue, wait=0, waitAnnounce=0, waitPermit=0, song_size=0, song_name_size=0, temp_song_size=0, sent_bytes=0;
+	int j, newStationTimeOut=0, bytes_rec=0, selectValue, wait=0, waitAnnounce=0, waitPermit=0, song_size=0, song_name_size=0, temp_song_size=0, sent_bytes=0;
 	uint16_t read_data, wantedStation, percents=0;
 	char stdBuffer[4] = {'0'}, songName[100] = {0}, * songTitle, * invalidStr;
 	struct timeval timeout;
